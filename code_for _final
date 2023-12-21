@@ -1,1 +1,511 @@
+// variables for the program.
+var lines = 0;
+var high_score = 0;
+var speed = 500;
+var board = [];
+var rows = 20;
+var score = 0;
+var columns = 10;
+var i = 0;
+var new_block = 0;
+var start_time = millis();
+var last_move = start_time;
+var last_press = start_time;
+var last_down = start_time;
+var currentScene = 0;
+// our bitmojits that will be used for the program.
+var drawHead = function(xPos, yPos, bitmojiH) {
+noStroke();
+fill(232, 158, 84);
+ellipse(xPos + (bitmojiH / 150 * 100),yPos + (bitmojiH / 150 * 100),(bitmojiH / 150 * 75), (bitmojiH / 150 * 75)); //Head
+fill(255, 255, 255);
+arc(xPos + (bitmojiH / 150 *61),yPos + (bitmojiH / 150 * 136), (bitmojiH / 150 * 25), (bitmojiH / 150 * 65), 0, 360); //left cheekbone
+arc(xPos + (bitmojiH / 150 * 139),yPos + (bitmojiH / 150 * 136), (bitmojiH / 150 * 25), (bitmojiH / 150 * 65), 0, 360); //right cheekbone
+fill(3, 3, 3);
+rect(xPos + (bitmojiH / 150 * 59),yPos + (bitmojiH / 150 * 74), (bitmojiH / 150 * 11), (bitmojiH / 150 * 36)); //left side hair
+rect(xPos + (bitmojiH / 150 * 128),yPos + (bitmojiH / 150 * 74), (bitmojiH / 150 * 11), (bitmojiH / 150 * 36)); //right side hair
+fill(0, 149, 255);
+arc(xPos + (bitmojiH / 150 * 99), yPos + (bitmojiH / 150 * 75), (bitmojiH / 150 * 80), (bitmojiH / 150 * 43), 180, 360); //Hat
+fill(0, 0, 0);
+ellipse(xPos + (bitmojiH / 150 * 86),yPos + (bitmojiH / 150 * 100),(bitmojiH / 150 * 7),(bitmojiH / 150 * 7)); //left eye
+ellipse(xPos + (bitmojiH / 150 * 113),yPos + (bitmojiH / 150 * 100),(bitmojiH / 150 * 7),(bitmojiH / 150 * 7)); //right eye
+arc(xPos + (bitmojiH / 150 * 85), yPos + (bitmojiH / 150 * 90), (bitmojiH / 150 * 17), (bitmojiH / 150 * 6), 180, 360); //left eyebrow
+arc(xPos + (bitmojiH / 150 * 112), yPos + (bitmojiH / 150 * 90), (bitmojiH / 150 * 17), (bitmojiH / 150 * 6), 180, 360); //right eyebrow
+fill(255, 255, 255);
+stroke(0, 0, 0);
+strokeWeight(2);
+line(xPos + (bitmojiH / 150 * 73), yPos + (bitmojiH / 150 * 100), xPos + (bitmojiH / 150 * 53), yPos + (bitmojiH / 150 * 100)); //left side glasses
+line(xPos + (bitmojiH / 150 * 123), yPos + (bitmojiH / 150 * 100), xPos + (bitmojiH / 150 * 144), yPos + (bitmojiH / 150 * 100)); //right side glasses
+line(xPos + (bitmojiH / 150 * 94), yPos + (bitmojiH / 150 * 100), xPos + (bitmojiH / 150 * 101), yPos + (bitmojiH / 150 * 100)); //middle glasses
+
+noFill(); //takes out the color in the box so eyes are visible
+rect(xPos + (bitmojiH / 150 * 73), yPos + (bitmojiH / 150 * 95), (bitmojiH / 150 * 20), (bitmojiH / 150 * 10)); //left glass
+rect(xPos + (bitmojiH / 150 * 102), yPos + (bitmojiH / 150 * 95), (bitmojiH / 150 * 20), (bitmojiH / 150 * 10)); //right glass
+stroke(3, 0, 0);
+bezier(xPos + (bitmojiH / 150 * 93), yPos + (bitmojiH / 150 * 110), xPos + (bitmojiH / 150 * 91), yPos + (bitmojiH / 150 * 94), xPos + (bitmojiH / 150 * 108), yPos + (bitmojiH / 150 * 110), xPos + (bitmojiH / 150 * 102), yPos + (bitmojiH / 150 * 110)); //nose
+line(xPos + (bitmojiH / 150 * 84), yPos + (bitmojiH / 150 * 120), xPos + (bitmojiH / 150 * 113), yPos + (bitmojiH / 150 * 120)); //upper lip
+fill(250, 245, 245);
+arc(xPos + (bitmojiH / 150 * 99), yPos + (bitmojiH / 150 * 121), (bitmojiH / 150 * 29), (bitmojiH / 150 * 16), 0, 180); //Mouth
+noFill();
+strokeWeight(3);
+arc(xPos + (bitmojiH / 150 * 99), yPos + (bitmojiH / 150 * 117), (bitmojiH / 150 * 25), (bitmojiH / 150 * 6), 180, 360); //Moustache 
+line(xPos + (bitmojiH / 150 * 70), yPos + (bitmojiH / 150 * 110), xPos + (bitmojiH / 150 * 71), yPos + (bitmojiH / 150 * 124)); //Facial hair
+line(xPos + (bitmojiH / 150 * 131), yPos + (bitmojiH / 150 * 110), xPos + (bitmojiH / 150 * 129), yPos + (bitmojiH / 150 * 124)); //Facial hair
+arc(xPos + (bitmojiH / 150 * 100), yPos + (bitmojiH / 150 * 122), (bitmojiH / 150 * 58), (bitmojiH / 150 * 27), 0, 180); //Facial hair
+};
+
+var drawBody = function(xPos, yPos, bitmojiH){
+fill(250, 245, 245);
+quad(xPos + (bitmojiH / 150 * 156),yPos + (bitmojiH / 150 * 173),xPos + (bitmojiH / 150 * 37),yPos + (bitmojiH / 150 * 173),xPos + (bitmojiH / 150 * 55),yPos + (bitmojiH / 150 * 137),xPos + (bitmojiH / 150 * 143),yPos + (bitmojiH / 150 * 138)); //shirt
+noFill();
+strokeWeight(5);
+arc(xPos + (bitmojiH / 150 * 82),yPos + (bitmojiH / 150 * 155),(bitmojiH / 150 * 25),(bitmojiH / 150 * 20),90,270); //Initials
+bezier(xPos + (bitmojiH / 150 * 99), yPos + (bitmojiH / 150 * 165), xPos + (bitmojiH / 150 * 98), yPos + (bitmojiH / 150 * 119), xPos + (bitmojiH / 150 * 100), yPos + (bitmojiH / 150 * 163), xPos + (bitmojiH / 150 * 116),yPos + (bitmojiH / 150 * 165)); //Initials
+line(xPos + (bitmojiH / 150 * 116), yPos + (bitmojiH / 150 * 165), xPos + (bitmojiH / 150 * 116), yPos + (bitmojiH / 150 * 146)); //Initials
+};
+
+var drawChrisBitmoji = function(xPos, yPos, bitmojiH) {
+drawHead(xPos, yPos, bitmojiH);
+drawBody(xPos, yPos, bitmojiH);
+};
+
+var drawBitmojiHead = function(x, y, reSize) {
+    var r = reSize / 100;
+
+    // head shape 
+    noStroke();
+    fill(224, 172, 105);
+    ellipse(x + 100 * r, y + 104 * r, 86 * r, 100 * r);
+
+    // chisel 
+    fill(255, 255, 255);
+    arc(x + 54 * r, y + 137 * r, 24 * r, 55 * r, 0 * r, 360 * r);
+    arc(x + 146 * r, y + 137 * r, 24 * r, 55 * r, 0 * r, 360 * r);
+
+    // hair
+    fill(0, 0, 0);
+    arc(x + 100 * r, y + 77 * r, 97 * r, 44 * r, 174, 367);
+    rect(x + 133 * r, y + 71 * r, 6 * r, 25 * r);
+    rect(x + 62 * r, y + 69 * r, 6 * r, 25 * r);
+    arc(x + 69 * r, y + 87 * r, 38 * r, 30 * r, 128, 247);
+    arc(x + 133 * r, y + 87 * r, 35 * r, 27 * r, 272, 431);
+
+    // glasses
+    stroke(0, 0, 0);
+    fill(224, 172, 105);
+    rect(x + 75 * r, y + 90 * r, 19 * r, 20 * r);
+    rect(x + 105 * r, y + 90 * r, 20 * r, 20 * r);
+    line(x + 94 * r, y + 100 * r, x + 105 * r, y + 100 * r);
+    line(x + 75 * r, y + 100 * r, x + 57 * r, y + 95 * r);
+    line(x + 142 * r, y + 96 * r, x + 126 * r, y + 101 * r);
+
+    // eyes 
+    noStroke();
+    fill(51, 39, 39);
+    ellipse(x + 116 * r, y + 101 * r, 5 * r, 5 * r);
+    ellipse(x + 86 * r, y + 101 * r, 5 * r, 5 * r);
+
+    // nose
+    stroke(0, 0, 0);
+    fill(224, 172, 105);
+    bezier(x + 99 * r, y + 102 * r, x + 121 * r, y + 123 * r, x + 92 * r, y + 116 * r, x + 95 * r, y + 118 * r);
+
+    // ears
+    noStroke();
+    fill(224, 172, 105);
+    ellipse(x + 58 * r, y + 104 * r, 15 * r, 20 * r);
+    ellipse(x + 143 * r, y + 104 * r, 15 * r, 20 * r);
+
+    // piercing
+    noStroke();
+    fill(255, 255, 255);
+    ellipse(x + 100 * r, y + 113 * r, 2 * r, 2 * r);
+    ellipse(x + 57 * r, y + 109 * r, 2 * r, 2 * r);
+    ellipse(x + 144 * r, y + 109 * r, 2 * r, 2 * r);
+
+    // mouth
+    stroke(0, 0, 0);
+    fill(255, 255, 255);
+    arc(x + 100 * r, y + 128 * r, 41 * r, 13 * r, 1 * r, 180 * r);
+};
+
+var drawBitmojiBody = function(x, y, reSize) {
+    var r = reSize / 100;
+
+    // clothes
+    fill(127, 125, 135);
+    rect(x + 70 * r, y + 150 * r, 61 * r, 120 * r);
+
+    // arms
+    fill(127, 125, 135);
+    rect(x + 50 * r, y + 150 * r, 20 * r, 64 * r, 5 * r);
+    rect(x + 130 * r, y + 150 * r, 20 * r, 71 * r, 5 * r);
+
+    // hands
+    fill(224, 172, 105);
+    stroke(0, 0, 0);
+    ellipse(x + 60 * r, y + 224 * r, 25 * r, 25 * r);
+    ellipse(x + 141 * r, y + 229 * r, 25 * r, 25 * r);
+
+    // legs
+    fill(0, 0, 0);
+    stroke(0, 0, 0);
+    rect(x + 75 * r, y + 270 * r, 20 * r, 66 * r);
+    rect(x + 105 * r, y + 270 * r, 20 * r, 73 * r);
+
+    // shoes
+    fill(0, 0, 0);
+    rect(x + 65 * r, y + 335 * r, 30 * r, 10 * r);
+    rect(x + 104 * r, y + 335 * r, 30 * r, 10 * r);
+
+    // facial hair
+    line(x + 123 * r, y + 127 * r, x + 76 * r, y + 128 * r);
+    rect(x + 90 * r, y + 139 * r, 19 * r, 12 * r);
+
+    // initials
+    line(x + 86 * r, y + 172 * r, x + 75 * r, y + 200 * r);
+    line(x + 86 * r, y + 170 * r, x + 95 * r, y + 201 * r);
+    line(x + 92 * r, y + 183 * r, x + 82 * r, y + 185 * r);
+    line(x + 103 * r, y + 202 * r, x + 103 * r, y + 171 * r);
+    line(x + 104 * r, y + 203 * r, x + 120 * r, y + 201 * r);
+};
+
+var drawBitmoji = function(x, y, reSize) {
+    drawBitmojiHead(x, y, reSize);
+    drawBitmojiBody(x, y, reSize);
+};
+
+var bitmoji = function(bitmojiX, bitmojiY, bitmojiHeight) {
+    drawBitmojiHead(bitmojiX, bitmojiY, bitmojiHeight);
+    drawBitmojiBody(bitmojiX, bitmojiY, bitmojiHeight);
+};
+
+var Button = function(config) {
+    this.x = config.x || 0;
+    this.y = config.y || 0;
+    this.width = config.width || 150;
+    this.height = config.height || 50;
+    this.label = config.label || "Click";
+    this.onClick = config.onClick || function() {};
+};
+
+Button.prototype.draw = function() {
+    fill(0, 0, 255);
+    rect(this.x, this.y, this.width, this.height, 25);
+    fill(255, 255, 255);
+    textSize(19);
+    textAlign(LEFT, TOP);
+    text(this.label, this.x + 25, this.y + this.height / 4);
+};
+
+Button.prototype.isMouseInside = function() {
+    return mouseX > this.x &&
+        mouseX < (this.x + this.width) &&
+        mouseY > this.y &&
+        mouseY < (this.y + this.height);
+};
+
+Button.prototype.handleMouseClick = function() {
+    if (this.isMouseInside()) {
+        this.onClick();
+    }
+};
+
+var btn1 = new Button({
+    x: 130,
+    y: 282,
+    label: "Start Game",
+    onClick: function() {
+        currentScene = 1;
+        score = 0;
+    }
+});
+
+mouseClicked = function() {
+    if (currentScene === 0) {
+        btn1.handleMouseClick();
+    }
+};
+
+// splash screen
+var drawsplashScreen = function() {
+    currentScene = 0;
+    background(139, 217, 213);
+    fill(255, 255, 255);
+    if (currentScene === 0) {
+        fill(0, 0, 255);
+        rect(64, 35, 279, 67);
+        rect(168, 103, 68, 61);
+        fill(255, 255, 255);
+        textSize(40);
+        textFont(createFont("Times new Roman Bold Italic"));
+        text("TETRIS.Project", 67, 81);
+        drawChrisBitmoji(90, 165, 20);
+        drawBitmoji(50, 137, 31);
+        btn1.draw();
+    }
+};
+
+// loop that will be used to push the p
+while (i < rows) {
+    //local variables to makew the loop 
+    var j = 0;
+    var row = [];
+    while (j < columns) {
+        row.push(0);
+        j++;
+    }
+    board.push(row);
+    i++;
+}
+//it will remove the blocks by using a reverse loop. 
+var removeCompletedRows = function () {
+    for (var i = rows - 1; i >= 0; i--) {
+        var isRowComplete = true;
+        for (var j = 0; j < columns; j++) {
+            if (board[i][j] === 0) {
+                isRowComplete = false;
+                break;
+            }
+        }
+
+        if (isRowComplete) {
+            // Remove the complete row and shift the rows above it down
+            for (var k = i; k > 0; k--) {
+                for (var j = 0; j < columns; j++) {
+                    board[k][j] = board[k - 1][j];
+                }
+            }
+            // Add a new empty row at the top
+            for (var j = 0; j < columns; j++) {
+                board[0][j] = 0;
+            }
+
+            score += 100;
+            lines++;
+            
+        }
+         
+    }
+};
+//randomize where the blocks will fall.
+var hint_block = [round(random(3, 6)), 0, floor(random(0, 3)), floor(random(0, 4))];
+var block = [round(random(3, 6)), 0, floor(random(0, 3))];
+// pixles used to create the blocks.
+var get_shape = function (blocks) {
+strokeWeight(1);
+    if (block[2] === 0) {
+        return [[0, 0]];
+    } else if (block[2] === 1) {
+        return [[0, 0], [0, 1], [1, 0], [1, 1]];
+    } else if (block[2] === 2) {
+        if (block[3] === 0 || block[3] === 2) {
+            return [[0, 0], [0, 1], [0, 2], [0, 3]];
+        } else {
+            return [[0, 0], [1, 0], [2, 0], [3, 0]];
+        }
+    }
+};
+
+var block_shape = function (block) {
+    var shape = get_shape(block);
+    var i = 0;
+
+    stroke(0, 0, 0);
+
+    while (i < shape.length) {
+        rect((block[0] + shape[i][0]) * 20, (block[1] + shape[i][1]) * 20, 20, 20);
+        i++;
+    }
+
+    // Reset the stroke color after the loop
+    noStroke();
+};
+
+var move_shape = function (board, block) {
+    if (millis() > last_move + speed) {
+        block[1] += 1;
+        if(keyIsPressed && keyCode === DOWN){
+            speed = 30;
+        }
+        else{
+            speed = 500;
+        }
+        last_move = millis();
+        if (speed > 75) {
+            speed -= 0.1;
+        }
+    }
+};
+//the loop for the tetris baord
+var drawBoard = function (board) {
+    var i = 0;
+    while (i < 20) {
+        var j = 0;
+
+        // Set the stroke color before the loop
+        stroke(0, 0, 0);
+
+        while (j < 10) {
+            if (board[i][j] === 1) {
+                rect(j * 20, i * 20, 20, 20);
+            }
+            j++;
+        }
+        line(205, 428, 205, -20);
+        noStroke();
+        i++;
+    }
+    
+};
+
+//colliosn for when the blocks land on each other.
+var collision = function (block, board) {
+    var shape = get_shape(block);
+    var i = 0;
+    var colliding = 0;
+
+    while (i < shape.length) {
+        var row = block[1] + shape[i][1] + 1;
+        var col = block[0] + shape[i][0];
+
+        if (row >= rows || board[row][col] === 1) {
+            colliding = 1;
+        }
+        stroke(255, 255, 255);
+        i++;
+    }
+
+    if (colliding === 1) {
+        for (i = 0; i < shape.length; i++) {
+            board[block[1] + shape[i][1]][block[0] + shape[i][0]] = 1;
+        }
+        new_block = 1;
+        removeCompletedRows();
+    }
+    return board;
+};
+//the varable was made to five the player what next block will be coming.
+var draw_hint = function (hint_block) {
+    fill(0, 0, 0);
+    textSize(20);
+    text("next block", 227, 300); // Adjusted coordinates
+    fill(0, 9, 255);
+    block_shape([13, 16, hint_block[2], hint_block[3]]); // Adjusted block position
+};
+
+var to_move_left = false;
+var to_move_right = false;
+// ket function for the blocks to be moved 
+var keyPressed = function () {
+    if (keyCode === LEFT && millis() > last_press + 250) {
+        to_move_left = true;
+        last_press = millis();
+    } else if (keyCode === RIGHT && millis() > last_press + 250) {
+        to_move_right = true;
+        last_press = millis();
+    }
+};
+
+var play = 1;
+//it is what will be drawn onto the screen and what will be called
+draw = function () {
+    
+    if (play === 1) {
+        if (new_block === 1) {
+            block = hint_block;
+            hint_block = [round(random(3, 6)), 0, floor(random(0, 3)), floor(random(0, 4))];
+            new_block = 0; // Reset new_block
+        }
+        // added style for the program
+        background(47, 206, 214);
+        fill(0, 0, 0);
+        textSize(18);
+        text("Score: " + score, 261, 20);
+        drawBitmoji(215,50,50);
+        drawChrisBitmoji(280,70,100);
+    
+        draw_hint(hint_block);
+        line(200, 0, 200, 400);
+        fill(0, 9, 255);
+        block_shape(block);
+        move_shape(board, block);
+        board = collision(block, board);
+        fill(0, 9, 255);
+        drawBoard(board);
+
+        if (to_move_left) {
+            var i = 0;
+            var shape = get_shape(block);
+            var moveable_left = 1;
+            while (i < shape.length) {
+                if (board[block[1] + shape[i][1]][block[0] - 1 + shape[i][0]] === 1) {
+                    moveable_left = 0;
+                }
+                i++;
+            }
+            if (moveable_left === 1) {
+                if (block[0] > 0) {
+                    block[0] -= 1;
+                }
+            }
+            to_move_left = false;
+        }
+
+        if (to_move_right) {
+            var i = 0;
+            var shape = get_shape(block);
+            var moveable_right = 1;
+            while (i < shape.length) {
+                if (board[block[1] + shape[i][1]][block[0] + 1 + shape[i][0]] === 1) {
+                    moveable_right = 0;
+                }
+                i++;
+            }
+            if (moveable_right === 1) {
+                var can_move = 1;
+                for (var i = 0; i < shape.length; i++) {
+                    if (block[0] + shape[i][0] >= columns - 1) {
+                        can_move = 0;
+                    }
+                }
+                if (can_move === 1) {
+                    block[0] += 1;
+                }
+            }
+            to_move_right = false;
+        }
+    } 
+strokeWeight(1);
+};
+
+var removeCompletedRows = function () {
+    for (var i = rows - 1; i >= 0; i--) {
+        var isRowComplete = true;
+        for (var j = 0; j < columns; j++) {
+            if (board[i][j] === 0) {
+                isRowComplete = false;
+                break;
+            }
+        }
+
+        if (isRowComplete) {
+            // Remove the complete row and shift the rows above it down
+            for (var k = i; k > 0; k--) {
+                for (var j = 0; j < columns; j++) {
+                    board[k][j] = board[k - 1][j];
+                }
+            }
+            // Add a new empty row at the top
+            for (var j = 0; j < columns; j++) {
+                board[0][j] = 0;
+            }
+
+            score += 100;
+            lines++;
+            
+        }
+         
+    }
+};
 
